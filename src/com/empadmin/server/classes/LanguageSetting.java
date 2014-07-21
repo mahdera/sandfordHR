@@ -1,0 +1,265 @@
+/**
+ * 
+ */
+package com.empadmin.server.classes;
+
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author mahder
+ * 
+ */
+public class LanguageSetting {
+	private int id;
+	private int languageId;
+	private int labelId;
+	private String labelValue;
+
+	/**
+	 * 
+	 */
+	public LanguageSetting() {
+	}
+
+	/**
+	 * @param language
+	 * @param fieldName
+	 * @param fieldValue
+	 */
+	public LanguageSetting(int languageId, int labelId, String labelValue) {
+		this.languageId = languageId;
+		this.labelId = labelId;
+		this.labelValue = labelValue;
+	}
+
+	/**
+	 * @param id
+	 * @param language
+	 * @param fieldName
+	 * @param fieldValue
+	 */
+	public LanguageSetting(int id, int languageId, int labelId,
+			String labelValue) {
+		this.id = id;
+		this.languageId = languageId;
+		this.labelId = labelId;
+		this.labelValue = labelValue;
+	}
+	
+	
+
+	/**
+	 * @return the languageId
+	 */
+	public int getLanguageId() {
+		return languageId;
+	}
+
+	/**
+	 * @param languageId the languageId to set
+	 */
+	public void setLanguageId(int languageId) {
+		this.languageId = languageId;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	
+
+	/**
+	 * @return the labelId
+	 */
+	public int getLabelId() {
+		return labelId;
+	}
+
+	/**
+	 * @param labelId the labelId to set
+	 */
+	public void setLabelId(int labelId) {
+		this.labelId = labelId;
+	}
+
+	/**
+	 * @return the labelValue
+	 */
+	public String getLabelValue() {
+		return labelValue;
+	}
+
+	/**
+	 * @param labelValue the labelValue to set
+	 */
+	public void setLabelValue(String labelValue) {
+		this.labelValue = labelValue;
+	}
+
+	public void addLanguageSetting() {
+		try {
+			String command = "INSERT INTO tbl_language_setting VALUES(0,"+this.getLanguageId()+","+
+			this.getLabelId()+",'"+this.getLabelValue()+"')";			
+			DBConnection.writeToDatabase(command);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+	}
+
+	public static void updateLanuageSetting(int id, int languageId,
+			String labelValue) {
+		try {
+			String command = "UPDATE tbl_language_setting SET language_id = "+languageId+", "+
+			" label_value = '"+labelValue+"' WHERE id = "+id;
+			DBConnection.writeToDatabase(command);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+	}
+
+	public static void deleteLanguageSetting(int id) {
+		try {
+			String command = "DELETE FROM tbl_language_setting WHERE id = "+id;
+			DBConnection.writeToDatabase(command);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+	}
+	
+	public static void deleteLanguageSettingForLanguage(int langId){
+		try {
+			String command = "DELETE FROM tbl_language_setting WHERE language_id = "+langId;
+			DBConnection.writeToDatabase(command);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+	}
+
+	public static List<LanguageSetting> getAllLanguageSettings() {
+		List<LanguageSetting> list = new ArrayList<LanguageSetting>();
+		LanguageSetting langSetting = null;		
+		try {
+			String query = "SELECT * FROM tbl_language_setting ORDER BY language_id";
+			ResultSet rSet = DBConnection.readFromDatabase(query);
+			while(rSet.next()){
+				langSetting = new LanguageSetting(rSet.getInt("id"),rSet.getInt("language_id"),
+						rSet.getInt("label_id"),rSet.getString("label_value"));
+				list.add(langSetting);
+			}//end while loop
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+		return list;
+	}
+	
+	public static List<LanguageSetting> getAllLanguageSettingsForLanguage(int langId) {
+		List<LanguageSetting> list = new ArrayList<LanguageSetting>();
+		LanguageSetting langSetting = null;		
+		try {
+			String query = "SELECT * FROM tbl_language_setting WHERE language_id = "+langId+" ORDER BY language_id";
+			ResultSet rSet = DBConnection.readFromDatabase(query);
+			while(rSet.next()){
+				langSetting = new LanguageSetting(rSet.getInt("id"),rSet.getInt("language_id"),
+						rSet.getInt("label_id"),rSet.getString("label_value"));
+				list.add(langSetting);
+			}//end while loop
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+		return list;
+	}
+
+	public static LanguageSetting getLanguageSetting(int id) {		
+		LanguageSetting langSetting = null;		
+		try {
+			String query = "SELECT * FROM tbl_language_setting WHERE id = "+id;
+			ResultSet rSet = DBConnection.readFromDatabase(query);
+			while(rSet.next()){
+				langSetting = new LanguageSetting(rSet.getInt("id"),rSet.getInt("language_id"),
+						rSet.getInt("label_id"),rSet.getString("label_value"));				
+			}//end while loop
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+		return langSetting;
+	}
+
+	public static LanguageSetting getLanguageSetting(int languageId,
+			String fieldName) {		
+		LanguageSetting langSetting = null;		
+		try {
+			String query = "SELECT * FROM tbl_language_setting WHERE id = "+languageId+" AND field_name = '"+fieldName+"'";
+			ResultSet rSet = DBConnection.readFromDatabase(query);
+			while(rSet.next()){
+				langSetting = new LanguageSetting(rSet.getInt("id"),rSet.getInt("language_id"),
+						rSet.getInt("label_id"),rSet.getString("label_value"));				
+			}//end while loop
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBConnection.disconnectDatabase();
+		}
+		return langSetting;
+	}
+	
+	public static String getLabelCaptionInTheSelectedLanguage(int langId,String strLabelId){
+		String labelCaption = null;
+		try{
+			String query = "SELECT label_value AS caption FROM tbl_language_setting,tbl_label WHERE "+
+			"tbl_language_setting.language_id = "+langId+" AND tbl_language_setting.label_id = "+
+			"tbl_label.id AND tbl_label.label_id = '"+strLabelId+"'";
+			ResultSet rSet = DBConnection.readFromDatabase(query);
+			if(rSet.next())
+				labelCaption = rSet.getString("caption");
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			DBConnection.disconnectDatabase();
+		}
+		return labelCaption;
+	}
+	
+	public static String getLabelCaptionInTheSelectedLanguage(int langId,int labelId){
+		String labelCaption = null;
+		try{
+			String query = "SELECT * FROM tbl_language_setting WHERE language_id = "+langId+
+			" AND label_id = "+labelId;
+			System.out.println("this is the query: "+query);
+			ResultSet rSet = DBConnection.readFromDatabase(query);
+			if(rSet.next())
+				labelCaption = rSet.getString("label_value");
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			DBConnection.disconnectDatabase();
+		}
+		return labelCaption;
+	}
+}// end class
